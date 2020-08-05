@@ -8,6 +8,8 @@ echo "Users must provide all 4 command line arguments:
 	-g /path/to/prysm/beacon-chain/config.yaml /// THIS is where arguments to be passed to the beacon-chain are stored.
 	-i /path/to/prysm/validator/config.yaml	   /// THIS is where arguments to be passed to the validator are stored.
 	"
+echo "i
+Do not run the script with sudo.  You'll be asked for your password inside the script.  You must be logged in to a user that has a working validator.  For example keys must have already been imported.  ~/.eth2validators must be in good condition."
 
 beaconName=""
 validatorName=""
@@ -20,22 +22,22 @@ validatorConfig=""
 while getopts "b:v:g:i:c:d:" opt; do
   case $opt in
     c)
-      beaconName = $OPTARG
+      beaconName=$OPTARG
       ;;
     d)
-      validatorName = $OPTARG
+      validatorName=$OPTARG
       ;;
     b)
-      beaconXPath = $OPTARG
+      beaconXPath=$OPTARG
       ;;
     v)
-      validatorXPath = $OPTARG
+      validatorXPath=$OPTARG
       ;;
     g)
-      beaconConfig = $OPTARG
+      beaconConfig=$OPTARG
       ;;
     i)
-      validatorConfig = $OPTARG
+      validatorConfig=$OPTARG
       ;;
   esac
 done
@@ -47,12 +49,12 @@ then
 fi
 
 #DEBUG - TO BE DELETED
-echo "$beaconName"
-echo "$validatorName"
-echo "$beaconXPath"
-echo "$validatorXPath"
-echo "$beaconConfig"
-echo "$validatorConfig"
+#echo "$beaconName"
+#echo "$validatorName"
+#echo "$beaconXPath"
+#echo "$validatorXPath"
+#echo "$beaconConfig"
+#echo "$validatorConfig"
 
 # CREATE WARNING HERE AND GIVE OPPORTUNITY TO EXIT
 echo "------------------------------------"
@@ -69,6 +71,27 @@ echo "
 Enter any key if you agree and want to proceed.  Exit the program otherwise.  See the initial output of this script for further details on usage"
 
 #DO STUFF
+
+sudo adduser "$beaconName"
+sudo passwd -d "$beaconName"
+sudo adduser "$validatorName"
+sudo passwd -d "$validatorName"
+sudo touch /etc/systemd/system/beacon.service
+sudo echo "[Unit]
+Description=beacon-chain
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=$beaconName
+Group=$beaconName
+Restart=always
+RestartSec=5
+ExecStart=$beaconXPath --config-file $beaconConfig
+
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/beacon.service
 
 
 
