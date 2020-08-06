@@ -96,6 +96,26 @@ ExecStart=$beaconXPath --config-file $beaconConfig
 WantedBy=multi-user.target" > ~/beacon.service
 sudo mv ~/beacon.service /etc/systemd/system/
 
+echo "[Unit]
+Description=validator
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=$validatorName
+Group=$validatorName
+Restart=always
+RestartSec=5
+ExecStart=$validatorXPath --config-file $validatorConfig
+
+[Install]
+WantedBy=multi-user.target" > ~/validator.service
+sudo mv ~/validator.service /etc/systemd/system/
+sudo systemctl enable beacon
+sudo systemctl enable validator
+sudo systemctl start beacon
+sudo systemctl start validator
 
 
 
