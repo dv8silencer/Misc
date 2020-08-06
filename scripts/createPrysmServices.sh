@@ -1,5 +1,4 @@
 #!/bin/bash
-#NEED TO ECHO STUFF INCLUDING USAGE
 echo "***ALPHA SOFTWARE.  USE AT YOUR OWN RISK.  NO GUARANTEES ARE GIVEN***"
 echo "Users must provide all 4 command line arguments:
 	-c NameOfBeacon-ChainUsernameToCreate	   /// Please provide a name to be used for the beacon chain user on this system. This will be created and should not already exist!
@@ -57,17 +56,29 @@ then
 	exit 1
 fi
 
-#DEBUG - TO BE DELETED
-#echo "$beaconName"
-#echo "$validatorName"
-#echo "$beaconXPath"
-#echo "$validatorXPath"
-#echo "$beaconConfig"
-#echo "$validatorConfig"
+if [ ! -f "$beaconXPath" ]; then
+	echo "$beaconXPath does not exist!"
+	exit 1
+fi
 
-# CREATE WARNING HERE AND GIVE OPPORTUNITY TO EXIT
+if [ ! -f "$validatorXPath" ]; then
+	echo "$validatorXPath does not exist!"
+	exit 1
+fi
+
+if [ ! -f "$beaconConfig" ]; then
+	echo "$beaconConfig does not exist!"
+	exit 1
+fi
+
+if [ ! -f "$validatorConfig" ]; then
+	echo "$validatorConfig does not exist!"
+	exit 1
+fi
+
 echo "------------------------------------"
 echo "------------------------------------"
+echo "This software should have come with the GPLv3 license statement.  The following is it in part:"
 echo "15. Disclaimer of Warranty.
 THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
 
@@ -77,17 +88,17 @@ echo "------------------------------------"
 echo "------------------------------------"
 
 echo "
-Enter any key if you agree and want to proceed.  Exit the program otherwise.  See the initial output of this script for further details on usage"
-
-#DO STUFF
+"
+read -p "Enter any key if you agree and want to proceed.  Exit the program otherwise.  See the initial output of this script for further details on usage"
 
 echo "You will be prompted to set up $beaconName's password and other details"
 sudo adduser "$beaconName"
-#sudo passwd -d "$beaconName"
 echo "You will be prompted to set up $validatorName's password and other details"
 sudo adduser "$validatorName"
-#sudo passwd -d "$validatorName"
-#sudo touch /etc/systemd/system/beacon.service
+
+sudo chown $beaconName:$beaconName $beaconConfig
+sudo chown $validatorName:$validatorName $validatorConfig
+
 echo "[Unit]
 Description=beacon-chain
 Wants=network-online.target
@@ -121,6 +132,7 @@ ExecStart=$validatorXPath --config-file $validatorConfig
 [Install]
 WantedBy=multi-user.target" > ~/validator.service
 sudo mv ~/validator.service /etc/systemd/system/
+
 sudo systemctl enable beacon
 sudo systemctl enable validator
 sudo systemctl start beacon
