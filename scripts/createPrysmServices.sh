@@ -1,3 +1,4 @@
+#!/bin/bash
 #NEED TO ECHO STUFF INCLUDING USAGE
 echo "***ALPHA SOFTWARE.  USE AT YOUR OWN RISK.  NO GUARANTEES ARE GIVEN***"
 echo "Users must provide all 4 command line arguments:
@@ -8,8 +9,16 @@ echo "Users must provide all 4 command line arguments:
 	-g /path/to/prysm/beacon-chain/config.yaml /// THIS is where arguments to be passed to the beacon-chain are stored.
 	-i /path/to/prysm/validator/config.yaml	   /// THIS is where arguments to be passed to the validator are stored.
 	"
-echo "i
+echo "
 Do not run the script with sudo.  You'll be asked for your password inside the script.  You must be logged in to a user that has a working validator.  For example keys must have already been imported.  ~/.eth2validators must be in good condition."
+
+ID=$(id -u)
+
+if (( ID == 0 ))
+then
+	echo "Do not start the script as/with root/sudo"
+	exit 1
+fi
 
 beaconName=""
 validatorName=""
