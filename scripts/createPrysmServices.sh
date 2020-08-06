@@ -72,12 +72,14 @@ Enter any key if you agree and want to proceed.  Exit the program otherwise.  Se
 
 #DO STUFF
 
+echo "You will be prompted to set up $beaconName's password and other details"
 sudo adduser "$beaconName"
-sudo passwd -d "$beaconName"
+#sudo passwd -d "$beaconName"
+echo "You will be prompted to set up $validatorName's password and other details"
 sudo adduser "$validatorName"
-sudo passwd -d "$validatorName"
-sudo touch /etc/systemd/system/beacon.service
-sudo echo "[Unit]
+#sudo passwd -d "$validatorName"
+#sudo touch /etc/systemd/system/beacon.service
+echo "[Unit]
 Description=beacon-chain
 Wants=network-online.target
 After=network-online.target
@@ -91,7 +93,8 @@ RestartSec=5
 ExecStart=$beaconXPath --config-file $beaconConfig
 
 [Install]
-WantedBy=multi-user.target" > /etc/systemd/system/beacon.service
+WantedBy=multi-user.target" > ~/beacon.service
+sudo mv ~/beacon.service /etc/systemd/system/
 
 
 
