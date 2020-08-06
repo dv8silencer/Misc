@@ -1,15 +1,15 @@
 #!/bin/bash
 echo "***ALPHA SOFTWARE.  USE AT YOUR OWN RISK.  NO GUARANTEES ARE GIVEN***"
-echo "Users must provide all 4 command line arguments:
-	-c NameOfBeacon-ChainUsernameToCreate	   /// Please provide a name to be used for the beacon chain user on this system. This will be created and should not already exist!
+echo "Users must provide ALL 4 command line arguments:
+	-c NameOfBeaconChainUsernameToCreate	   /// Please provide a name to be used for the beacon chain user on this system. This will be created and should not already exist!
 	-d NameOfValidatorUsernameToCreate	   /// Please provide a name to be used for the validator user on this system. This will be created and should not already exist!
-	-b /path/to/prysm/beacon-chain/executable  /// Of note this should NOT provide any further beacon-chain arguments!
-	-v /path/to/prysm/validator/executable	   /// Of note this should NOT provide any further validator arguments!
-	-g /path/to/prysm/beacon-chain/config.yaml /// THIS is where arguments to be passed to the beacon-chain are stored.
-	-i /path/to/prysm/validator/config.yaml	   /// THIS is where arguments to be passed to the validator are stored.
+	-b /path/to/prysm/beacon-chain/executable  /// Of note this should NOT provide any further beacon-chain arguments!  Only the path to the binary/script.
+	-v /path/to/prysm/validator/executable	   /// Of note this should NOT provide any further validator arguments!  Only the path to the binary/script.
+	-g /path/to/prysm/beacon-chain/config.yaml /// THIS is where arguments to be passed to the beacon-chain are stored. Ownership will change to new beacon user.
+	-i /path/to/prysm/validator/config.yaml	   /// THIS is where arguments to be passed to the validator are stored. Ownership will change to new validator user.
 	"
 echo "
-Do not run the script with sudo.  You'll be asked for your password inside the script.  You must be logged in to a user that has a working validator.  For example keys must have already been imported.  ~/.eth2validators must be in good condition."
+Do not run the script with sudo.  You'll be asked for your password inside the script.  You must be logged in to a user that has a working validator.  For example, keys must have already been imported.  ~/.eth2validators must be in good condition."
 
 ID=$(id -u)
 
@@ -25,7 +25,6 @@ beaconXPath=""
 validatorXPath=""
 beaconConfig=""
 validatorConfig=""
-
 
 while getopts "b:v:g:i:c:d:" opt; do
   case $opt in
@@ -52,26 +51,30 @@ done
 
 if [[ "$beaconName" == "" ]] || [[ "$validatorName" == "" ]] || [[ "$beaconXPath" == "" ]] || [[ "$validatorXPath" == "" ]] || [[ "$beaconConfig" == "" ]] || [[ "$validatorConfig" == "" ]] 
 then
-	echo "Missing parameters."
+	echo "Missing parameters!"
 	exit 1
 fi
 
-if [ ! -f "$beaconXPath" ]; then
+if [ ! -f "$beaconXPath" ]
+then
 	echo "$beaconXPath does not exist!"
 	exit 1
 fi
 
-if [ ! -f "$validatorXPath" ]; then
+if [ ! -f "$validatorXPath" ]
+then
 	echo "$validatorXPath does not exist!"
 	exit 1
 fi
 
-if [ ! -f "$beaconConfig" ]; then
+if [ ! -f "$beaconConfig" ]
+then
 	echo "$beaconConfig does not exist!"
 	exit 1
 fi
 
-if [ ! -f "$validatorConfig" ]; then
+if [ ! -f "$validatorConfig" ]
+then
 	echo "$validatorConfig does not exist!"
 	exit 1
 fi
@@ -89,11 +92,11 @@ echo "------------------------------------"
 
 echo "
 "
-read -p "Enter any key if you agree and want to proceed.  Exit the program otherwise.  See the initial output of this script for further details on usage"
+read -p "Press enter if you agree and want to proceed.  Exit the program otherwise.  See the initial output of this script for further details on usage"
 
-echo "You will be prompted to set up $beaconName's password and other details"
+read -p "You will be prompted to set up $beaconName's password and other details. Press enter to continue."
 sudo adduser "$beaconName"
-echo "You will be prompted to set up $validatorName's password and other details"
+read -p "You will be prompted to set up $validatorName's password and other details. Press enter to continue."
 sudo adduser "$validatorName"
 
 sudo chown $beaconName:$beaconName $beaconConfig
@@ -137,6 +140,5 @@ sudo systemctl enable beacon
 sudo systemctl enable validator
 sudo systemctl start beacon
 sudo systemctl start validator
-
 
 
