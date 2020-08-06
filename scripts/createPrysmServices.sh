@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "***ALPHA SOFTWARE.  USE AT YOUR OWN RISK.  NO GUARANTEES ARE GIVEN***"
-echo "Users must provide ALL 4 command line arguments:
+echo "Users must provide ALL 6 command line arguments:
 	-c NameOfBeaconChainUsernameToCreate	   /// Please provide a name to be used for the beacon chain user on this system. This will be created and should not already exist!
 	-d NameOfValidatorUsernameToCreate	   /// Please provide a name to be used for the validator user on this system. This will be created and should not already exist!
 	-b /path/to/prysm/beacon-chain/executable  /// Of note this should NOT provide any further beacon-chain arguments!  Only the path to the binary/script.
